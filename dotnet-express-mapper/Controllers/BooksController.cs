@@ -9,7 +9,7 @@ namespace dotnet_express_mapper.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BooksController
+    public class BooksController : ControllerBase
     {
         private readonly BookService _bookService;
 

@@ -6,7 +6,7 @@ namespace dotnet_express_mapper.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthsController
+    public class AuthsController : ControllerBase
     {
 
         public AuthsController()
