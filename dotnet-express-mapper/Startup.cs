@@ -1,3 +1,6 @@
+using System;
+using System.Reflection;
+using dotnet_express_mapper.Data;
 using dotnet_express_mapper.Models;
 using dotnet_express_mapper.Services;
 using ExpressMapper;
@@ -5,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +26,8 @@ namespace dotnet_express_mapper
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 // This lambda determines whether user consent for non-essential cookies is needed for a given request.
@@ -30,7 +36,20 @@ namespace dotnet_express_mapper
             });
 
             MappingRegistration();
+
+            // Add framework services.
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration["ConnectionString"], sqlOptions =>
+                {
+                    sqlOptions.MigrationsAssembly(typeof(Startup).GetTypeInfo().Assembly.GetName().Name);
+                    //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
+                    sqlOptions.EnableRetryOnFailure(15, TimeSpan.FromSeconds(30), null);
+                }));
+
             services.AddScoped<BookService>();
+            services.AddScoped<ProductService>();
+
+            InitData(services);
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
 
@@ -55,10 +74,28 @@ namespace dotnet_express_mapper
             app.UseMvc();
         }
 
-        public void MappingRegistration()
+        private void MappingRegistration()
         {
+            Mapper.Register<Product, ProductViewModel>();
             Mapper.Register<Book, BookViewModel>();
             Mapper.Register<Author, AuthorDTO>();
+        }
+
+        private void InitData(IServiceCollection services)
+        {
+            ServiceProvider sp = services.BuildServiceProvider();
+            var context = sp.GetRequiredService<AppDbContext>();
+
+            try
+            {
+                context.Database.Migrate();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: Migration Database");
+            }
+
+            new AppContextSeed().SeedAsync(context).Wait();
         }
     }
 }
