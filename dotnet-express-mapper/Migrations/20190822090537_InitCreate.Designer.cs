@@ -9,8 +9,8 @@ using dotnet_express_mapper.Data;
 namespace dotnet_express_mapper.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190821084528_InitBrandType")]
-    partial class InitBrandType
+    [Migration("20190822090537_InitCreate")]
+    partial class InitCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -74,6 +74,25 @@ namespace dotnet_express_mapper.Migrations
                     b.ToTable("ProductTypes");
                 });
 
+            modelBuilder.Entity("dotnet_express_mapper.Models.Size", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("ProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Sizes");
+                });
+
             modelBuilder.Entity("dotnet_express_mapper.Models.Product", b =>
                 {
                     b.HasOne("dotnet_express_mapper.Models.ProductBrand", "ProductBrand")
@@ -84,6 +103,14 @@ namespace dotnet_express_mapper.Migrations
                     b.HasOne("dotnet_express_mapper.Models.ProductType", "ProductType")
                         .WithMany()
                         .HasForeignKey("ProductTypeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("dotnet_express_mapper.Models.Size", b =>
+                {
+                    b.HasOne("dotnet_express_mapper.Models.Product", "Product")
+                        .WithMany("Sizes")
+                        .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

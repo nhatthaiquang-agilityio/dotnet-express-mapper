@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace dotnet_express_mapper.Models
 {
@@ -21,5 +21,7 @@ namespace dotnet_express_mapper.Models
 
         // Quantity in stock
         public int AvailableStock { get; set; }
+
+        public ICollection<string> Sizes { get; set; }
     }
 }
