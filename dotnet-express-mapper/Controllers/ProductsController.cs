@@ -30,20 +30,31 @@ namespace dotnet_express_mapper.Controllers
 
         // GET api/products/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> Get(int id)
+        public async Task<ActionResult<ProductViewModel>> Get(int id)
         {
-            object product = await _productService.GetProduct(id);
+            Product product = await _productService.GetProduct(id);
             if (product == null)
                 return new NotFoundResult();
-            return new OkObjectResult(product);
+
+            ProductViewModel productViewModel = Mapper.Map<Product, ProductViewModel>(product);
+            return new OkObjectResult(productViewModel);
+        }
+
+        [Route("{id:int}/sizes")]
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Size>>> GetSizesOfProduct(int id)
+        {
+            object sizes = await _productService.GetSizeOfProduct(id);
+            if (sizes == null)
+                return new NotFoundResult();
+            return new OkObjectResult(sizes);
         }
 
         // POST api/products
         [HttpPost]
         public async Task<ActionResult<Product>> Post([FromBody] ProductViewModel productViewModel)
         {
-            Product product = Mapper.Map<ProductViewModel, Product>(productViewModel);
-            await _productService.Create(product);
+            Product product = await _productService.Create(productViewModel);
             return new OkObjectResult(product);
         }
 
@@ -56,9 +67,7 @@ namespace dotnet_express_mapper.Controllers
             if (productFromDb == null)
                 return new NotFoundResult();
 
-            Product product = Mapper.Map<ProductViewModel, Product>(productViewModel);
-            product.Id = productFromDb.Id;
-            await _productService.UpdateProductAsync(product);
+            Product product = await _productService.UpdateProductAsync(productViewModel);
 
             return new OkObjectResult(product);
         }

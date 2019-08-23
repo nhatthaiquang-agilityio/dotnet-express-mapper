@@ -9,10 +9,6 @@ namespace dotnet_express_mapper.Controllers
     public class AuthsController : ControllerBase
     {
 
-        public AuthsController()
-        {
-        }
-
         [HttpGet("getauthor")]
         public ActionResult<Author> Get()
         {
