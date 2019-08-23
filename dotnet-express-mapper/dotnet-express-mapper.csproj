@@ -17,8 +17,13 @@
     <Folder Include="Controllers\" />
     <Folder Include="Models\" />
     <Folder Include="Services\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Migrations\20190821080642_InitCreate.cs" />
+    <Compile Remove="Models\ProductVariant.cs" />
+    <Compile Remove="Migrations\20190822044225_InitCreate.Designer.cs" />
+    <Compile Remove="Migrations\20190822044225_InitCreate.cs" />
+    <Compile Remove="Migrations\AppDbContextModelSnapshot.cs" />
   </ItemGroup>
 </Project>

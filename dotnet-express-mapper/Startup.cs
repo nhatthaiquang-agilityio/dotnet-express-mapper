@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using dotnet_express_mapper.Data;
 using dotnet_express_mapper.Models;
@@ -76,9 +77,38 @@ namespace dotnet_express_mapper
 
         private void MappingRegistration()
         {
-            Mapper.Register<Product, ProductViewModel>();
-            Mapper.Register<Book, BookViewModel>();
+            Mapper.Register<Size, SizeViewModel>();
+            Mapper.Register<Product, ProductViewModel>()
+                .Function(dest => dest.Sizes, src =>
+                {
+                    List<string> sizes = new List<string>(src.Sizes.Count);
+                    foreach (var size in src.Sizes)
+                    {
+                        if (size != null)
+                        {
+                            sizes.Add(size.Name);
+                        }
+                    }
+                    return sizes;
+                });
+
+            Mapper.Register<Book, BookViewModel>()
+                .Member(dest => dest.Author, src => src.Author.FirstName + " "+ src.Author.LastName)
+                .Function(dest => dest.BookCategories, src => {
+                    List<string> categories = new List<string>(src.BookCategories.Count);
+                    foreach (var bookCategory in src.BookCategories)
+                    {
+                        if (bookCategory != null && bookCategory.Category != null)
+                        {
+                            categories.Add(bookCategory.Category.CategoryName);
+                        }
+                    }
+                    return categories;
+                });
             Mapper.Register<Author, AuthorDTO>();
+            Mapper.Register<BookCategory, BookCategoryViewModel>();
+            Mapper.Register<Category, CategoryViewModel>();
+            Mapper.Compile();
         }
 
         private void InitData(IServiceCollection services)
@@ -93,6 +123,7 @@ namespace dotnet_express_mapper
             catch (Exception e)
             {
                 Console.WriteLine("Error: Migration Database");
+                Console.WriteLine(e);
             }
 
             new AppContextSeed().SeedAsync(context).Wait();
