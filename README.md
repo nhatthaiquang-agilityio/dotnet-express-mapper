@@ -5,13 +5,15 @@
 + Seed Data
 
 ### Prerequisite
+-----------------
 + Asp Net Core 2.2
-+ Entity Framework
++ Entity Framework Core
 + Express Mapper
 + Sql Server
 + Docker & Docker Compose
 
 ### Reference
+--------------
 + [Express Mapper](http://expressmapper.org/)
 + [Configuring Many To Many Relationships in Entity Framework Core](https://www.learnentityframeworkcore.com/configuration/many-to-many-relationship-configuration)
 + [Configuring One To Many Relationships in Entity Framework Core](https://www.learnentityframeworkcore.com/configuration/one-to-many-relationship-configuration)
