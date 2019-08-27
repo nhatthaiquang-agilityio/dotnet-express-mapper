@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
+
 namespace dotnet_express_mapper
 {
     public class Startup
@@ -45,6 +46,7 @@ namespace dotnet_express_mapper
                     //Configuring Connection Resiliency: https://docs.microsoft.com/en-us/ef/core/miscellaneous/connection-resiliency
                     sqlOptions.EnableRetryOnFailure(15, TimeSpan.FromSeconds(30), null);
                 }));
+
 
             services.AddScoped<BookService>();
             services.AddScoped<ProductService>();
