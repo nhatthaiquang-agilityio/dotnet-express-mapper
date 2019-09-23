@@ -70,7 +70,7 @@ namespace dotnet_express_mapper.Services
         {
             Product productItem = await _appDBContext.Products.SingleOrDefaultAsync(i => i.Id == productViewModel.Id);
 
-            if ( productItem == null)
+            if (productItem == null)
                 return null;
 
             // set values
